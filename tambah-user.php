@@ -1,9 +1,8 @@
 <?php
     session_start();
 
-    
     // kalo session tidak ada, tolong redirect ke login
-    if (isset($_SESSION['nama'])) {
+    if (!isset($_SESSION['nama'])) {
         header("location:index.php?error=access-failed");
     }
     include 'config/config.php';
@@ -50,7 +49,7 @@
         // dan nilai id usernya diambil dari parameter
 
         $edit = mysqli_query($koneksi, "UPDATE user SET nama='$nama', email='$email', id_level='$level', password='$password' WHERE id = '$id'");
-        header("location:user.php?edit-user");
+        header('location:user.php');
 
         $queryLevel = mysqli_query($koneksi, "SELECT * FROM user LEFT JOIN level ON level.id = user.id_level ORDER BY level.id DESC");
     } 
@@ -90,9 +89,9 @@
 
                     <!-- Page Heading -->
                     <?php if(isset($_GET['edit'])) { ?>
-                        <h1 class="h3 mb-4 text-black-800">Edit User</h1>
+                        <h1 class="h3 mb-4 text-black-800">Edit Pengguna</h1>
                         <div class="card">
-                        <div class="card-header">Edit User</div>
+                        <div class="card-header">Edit Pengguna</div>
                         <div class="card-body">
                             <form action=""method="post">
                                 <div class="mb-3">
@@ -124,8 +123,8 @@
                             </form>
                         </div>
                     <?php }else{ ?>
-                        <h1 class="h3 mb-4 text-black-800">Tambah User</h1>
-                    <div class="card-header">Tambah User</div>
+                        <h1 class="h3 mb-4 text-black-800">Tambah Pengguna</h1>
+                    <div class="card-header">Tambah Pengguna</div>
                         <div class="card-body">
                             <form action=""method="POST">
                                 <div class="mb-3">

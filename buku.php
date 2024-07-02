@@ -2,11 +2,8 @@
 session_start();
 include 'config/config.php';
 // kalo session tidak ada, tolong redirect ke login
-if (!isset($_SESSION['nama'])) {
-    header("location:index.php?error=acces-failed");
-}
 
-$queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id_level FROM user LEFT JOIN level ON level.id = user.id_level ORDER BY user.id DESC");
+$queryBuku = mysqli_query($koneksi, "SELECT * FROM buku ORDER BY id DESC");
 
 ?>
 
@@ -42,9 +39,9 @@ $queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Data Pengguna</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Data Buku</h1>
                     <div align="right">
-                        <a href="tambah-anggota.php" class="btn btn-primary mb-3">Tambah Pengguna</a>
+                        <a href="tambah-anggota.php" class="btn btn-primary mb-3">Tambah Buku</a>
                     </div>
 
                     <div class="table-responsive">
@@ -53,22 +50,28 @@ $queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id
                                 <tr>
                                     <th>No.</th>
                                     <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Level</th>
+                                    <th>Penerbit</th>
+                                    <th>Qty</th>
+                                    <th>Deskripsi</th>
+                                    <th>Penulis</th>
+                                    <th>Genre</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $no = 1;
-                                while ($dataUser = mysqli_fetch_assoc($queryUser)) { ?>
+                                while ($dataBuku = mysqli_fetch_assoc($queryBuku)) { ?>
                                     <tr>
                                         <td><?php echo $no++ ?></td>
-                                        <td><?php echo $dataUser['nama'] ?></td>
-                                        <td><?php echo $dataUser['email'] ?></td>
-                                        <td><?php echo $dataUser['nama_level'] ?></td>
+                                        <td><?php echo $dataBuku['nama_buku'] ?></td>
+                                        <td><?php echo $dataBuku['penerbit'] ?></td>
+                                        <td><?php echo $dataBuku['qty'] ?></td>
+                                        <td><?php echo $dataBuku['deskripsi'] ?></td>
+                                        <td><?php echo $dataBuku['penulis'] ?></td>
+                                        <td><?php echo $dataBuku['genre'] ?></td>
                                         <td>
-                                            <a href="tambah-user.php?edit=<?php echo $dataUser['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-user.php?delete=<?php echo $dataUser['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="tambah-buku.php?edit=<?php echo $dataBuku['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-buku.php?delete=<?php echo $dataBuku['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                                         </td>
                                     </tr>
                                 <?php } ?>

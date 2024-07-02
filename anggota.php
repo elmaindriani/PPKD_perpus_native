@@ -2,11 +2,8 @@
 session_start();
 include 'config/config.php';
 // kalo session tidak ada, tolong redirect ke login
-if (!isset($_SESSION['nama'])) {
-    header("location:index.php?error=acces-failed");
-}
 
-$queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id_level FROM user LEFT JOIN level ON level.id = user.id_level ORDER BY user.id DESC");
+$queryAnggota = mysqli_query($koneksi, "SELECT * FROM anggota ORDER BY id DESC");
 
 ?>
 
@@ -42,9 +39,9 @@ $queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Data Pengguna</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Data Anggota</h1>
                     <div align="right">
-                        <a href="tambah-anggota.php" class="btn btn-primary mb-3">Tambah Pengguna</a>
+                        <a href="tambah-anggota.php" class="btn btn-primary mb-3">Tambah Anggota</a>
                     </div>
 
                     <div class="table-responsive">
@@ -54,21 +51,21 @@ $queryUser = mysqli_query($koneksi, "SELECT user.id, nama, email, nama_level, id
                                     <th>No.</th>
                                     <th>Nama</th>
                                     <th>Email</th>
-                                    <th>Level</th>
+                                    <th>No Tlp</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $no = 1;
-                                while ($dataUser = mysqli_fetch_assoc($queryUser)) { ?>
+                                while ($dataAnggota = mysqli_fetch_assoc($queryAnggota)) { ?>
                                     <tr>
                                         <td><?php echo $no++ ?></td>
-                                        <td><?php echo $dataUser['nama'] ?></td>
-                                        <td><?php echo $dataUser['email'] ?></td>
-                                        <td><?php echo $dataUser['nama_level'] ?></td>
+                                        <td><?php echo $dataAnggota['nama_anggota'] ?></td>
+                                        <td><?php echo $dataAnggota['email'] ?></td>
+                                        <td><?php echo $dataAnggota['no_tlp'] ?></td>
                                         <td>
-                                            <a href="tambah-user.php?edit=<?php echo $dataUser['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-user.php?delete=<?php echo $dataUser['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="tambah-anggota.php?edit=<?php echo $dataAnggota['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-anggota.php?delete=<?php echo $dataAnggota['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                                         </td>
                                     </tr>
                                 <?php } ?>

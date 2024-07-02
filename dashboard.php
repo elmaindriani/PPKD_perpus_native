@@ -7,6 +7,8 @@ if (!isset($_SESSION['nama'])) {
     header("location:index.php?error=access-failed");
 }
 
+$queryUser = mysqli_query($koneksi, "SELECT user.*, level.nama_level FROM user LEFT JOIN level ON level.id = user.id_level ORDER BY user.id DESC");
+
 // function getUser($koneksi, $nama_level)
 // {
 //     $array_status = [1, 2, 3];
@@ -60,7 +62,7 @@ if (!isset($_SESSION['nama'])) {
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+                    <!-- <h1 class="h3 mb-4 text-gray-800">Dashboard</h1> -->
                     
                     <h1 class="h3 mb-4 text-gray-800">Data User</h1>
                     <div class="table-responsive">
@@ -75,13 +77,12 @@ if (!isset($_SESSION['nama'])) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $no = 1;
-                                while ($dataUser = mysqli_fetch_assoc($dataUser)) { ?>
+                                <?php $no=1; while($dataUser = mysqli_fetch_assoc($queryUser)) { ?>
                                     <tr>
                                         <td><?php echo $no++ ?></td>
                                         <td><?php echo $dataUser['nama'] ?></td>
-                                        <td><?php echo $dataUser['Email'] ?></td>
-                                        <td><?php echo $dataUser['Level'] ?></td>
+                                        <td><?php echo $dataUser['email'] ?></td>
+                                        <td><?php echo $dataUser['nama_level'] ?></td>
                                         <td>
                                             <a data-toggle="modal" data-target="#ubahStatus-<?php echo $dataUser['id'] ?>" href="#" class="btn btn-primary btn-sm">Edit</a>
                                             <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="user.php?delete=<?php echo $dataUser['id'] ?>" class="btn btn-danger btn-sm">Delete</a>

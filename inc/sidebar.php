@@ -6,7 +6,7 @@
     <div class="sidebar-brand-icon">
         <i class="fas fa-lock"></i>
     </div>
-    <div class="sidebar-brand-text mx-3">Admin Pendaftaran<sup></sup></div>
+    <div class="sidebar-brand-text mx-3">Admin Perpustakaan<sup></sup></div>
 </a>
 
 <!-- Divider -->
@@ -40,9 +40,9 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">MASTER DATA:</h6>
             <a class="collapse-item" href="user.php">Pengguna</a>
-            <!-- <a class="collapse-item" href="jurusan.php">Jurusan</a> -->
             <a class="collapse-item" href="level.php">Level</a>
-            <!-- <a class="collapse-item" href="gelombang.php">Gelombang</a> -->
+            <a class="collapse-item" href="anggota.php">Anggota</a>
+            <a class="collapse-item" href="buku.php">Buku</a>
             <!-- <a class="collapse-item" href="pertanyaan_wawancara.php">Pertanyaan Wawancara</a> -->
         </div>
     </div>
@@ -62,22 +62,22 @@
     <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
         aria-controls="collapsePages">
         <i class="fas fa-fw fa-folder"></i>
-        <span>Data Peserta</span>
+        <span>Data Transaksi</span>
     </a>
     <div id="collapsePages" class="collapse show" aria-labelledby="headingPages"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Peserta:</h6>
-            <a class="collapse-item" href="peserta.php">Peserta</a>
+            <h6 class="collapse-header">Data Transaksi:</h6>
+            <a class="collapse-item" href="peserta.php">Transaksi</a>
     </div>
 </li>
 
 <!-- Nav Item - Charts -->
-<li class="nav-item">
+<!-- <li class="nav-item">
     <a class="nav-link" href="charts.html">
         <i class="fas fa-fw fa-chart-area"></i>
         <span>Setting</span></a>
-</li>
+</li> -->
 
 <!-- Nav Item - Tables -->
 <!-- <li class="nav-item">
