@@ -67,8 +67,8 @@
     <div id="collapsePages" class="collapse show" aria-labelledby="headingPages"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Data Transaksi:</h6>
-            <a class="collapse-item" href="peserta.php">Transaksi</a>
+            <h6 class="collapse-header">Transaksi</h6>
+            <a class="collapse-item" href="peminjaman.php">Peminjam Buku</a>
     </div>
 </li>
 

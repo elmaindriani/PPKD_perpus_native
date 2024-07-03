@@ -6,7 +6,7 @@ if (!isset($_SESSION['nama'])) {
     header("location:index.php?error=acces-failed");
 }
 
-$query = mysqli_query($koneksi, "SELECT * FROM gelombang ORDER BY id DESC");
+$query = mysqli_query($koneksi, "SELECT * FROM peminjam ORDER BY id DESC");
 
 function customStatus($aktif)
 {
@@ -57,17 +57,17 @@ function customStatus($aktif)
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Data Gelombang</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Data Peminjam</h1>
                     <div align="right">
-                        <a href="tambah-gelombang.php" class="btn btn-primary mb-3">Tambah Gelombang</a>
+                        <a href="tambah-peminjaman.php" class="btn btn-primary mb-3">Tambah Peminjam</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="datatables">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama Gelombang</th>
-                                    <th>Aktif</th>
+                                    <th>Nomor Transaksi</th>
+                                    <th>Nama Anggota</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -76,11 +76,11 @@ function customStatus($aktif)
                                 while ($data = mysqli_fetch_assoc($query)) { ?>
                                     <tr>
                                         <td><?php echo $no++ ?></td>
-                                        <td><?php echo $data['nama_gelombang'] ?></td>
-                                        <td><?php echo customStatus($data['aktif']) ?></td>
+                                        <td><?php echo $data['no_transaksi'] ?></td>
+                                        <td><?php echo $data['id_anggota'] ?></td>
                                         <td>
-                                            <a href="tambah-gelombang.php?edit=<?php echo $data['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-gelombang.php?delete=<?php echo $data['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="tambah-peminjaman.php?edit=<?php echo $data['id'] ?>" class="btn btn-primary btn-sm">Detail</a>
+                                            <a onclick="return confirm('Apakah Anda yakin akan menghapus Data ini?')" href="tambah-peminjaman.php?delete=<?php echo $data['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                                         </td>
                                     </tr>
                                 <?php } ?>
