@@ -11,11 +11,22 @@ $queryUser = mysqli_query($koneksi, "SELECT * FROM peminjam ORDER BY id DESC");
 
 // Jika button disubmit, ambil nilai dari form, nama, email, password
 if (isset($_POST['simpan'])) {
-    $nama_gelombang = $_POST['nama_gelombang'];
+    $id_buku = $_POST['id_buku'];
+    $id_anggota = $_POST['id_anggota'];
+    $no_transaksi = $_POST['no_transaksi'];
 
-    // masukkan ke dalam table user dimana kolom nama di ambil nilainya dari input nama
-    $insertUser = mysqli_query($koneksi, "INSERT INTO gelombang (nama_gelombang) VALUE('$nama_gelombang')");
-    header('location:gelombang.php?notif=delete=success');
+    // masukkan ke dalam table peminjam dimana kolom nama di ambil nilainya dari input nama
+    $insertPeminjam = mysqli_query($koneksi, "INSERT INTO peminjam (id_anggota, no_transaksi) VALUE('$id_anggota', '$no_transaksi')");
+    $id_peminjam = mysqli_insert_id($koneksi);
+
+    foreach ($id_buku as $key => $buku) {
+        $books = $id_buku['$key'];
+        $tanggal_pinjam = $_POST['tanggal_pinjam']['$key'];
+        $tanggal_pengembalian = $_POST['tanggal_pengembalian']['$key'];
+
+        $insertDetail = mysqli_query($koneksi, "INSERT INTO detail_peminjam (id_peminjam, id_buku, tanggal_pinjam, tanggal_pengembalian) VALUE ('$id_buku', '$id_peminjam', '$tanggal_pinjam', '$tanggal_pengembalian')");
+    }
+    header('peminjam.php?tambah=berhasil');
 }
 
 // jika prameter delete ada, buat perintah/query delete
@@ -58,6 +69,8 @@ $urutan = $data['kode'];
 $urutan++;
 
 $kode_transaksi = $huruf . date("dmY") . sprintf("%03s", $urutan);
+
+$queryBuku = mysqli_query($koneksi, "SELECT * FROM buku ORDER BY id DESC");
 
 ?>
 
@@ -103,6 +116,7 @@ $kode_transaksi = $huruf . date("dmY") . sprintf("%03s", $urutan);
                                         <label for="">Nama Peminjaman</label>
                                         <input value="<?php echo $dataEdit['nama_gelombang'] ?>" type="text" class="form-control" name="nama_gelombang" placeholder="Masukkan Nama Gelombang...">
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="">Aktif</label>
                                         <select name="aktif" id="" class="form-control">
@@ -111,6 +125,7 @@ $kode_transaksi = $huruf . date("dmY") . sprintf("%03s", $urutan);
                                             <option <?php echo ($dataEdit['aktif'] == 0) ? 'selected' : '' ?> value="0">Tidak Aktif</option>
                                         </select>
                                     </div>
+
                                     <div class="mb-3">
                                         <input type="submit" class="btn btn-primary" name="edit" value="Ubah">
                                         <a href="gelombang.php" class="btn btn-danger">Kembali</a>
@@ -137,67 +152,72 @@ $kode_transaksi = $huruf . date("dmY") . sprintf("%03s", $urutan);
                                         <div class="col-sm-3">
                                             <button type="button" class="btn btn-success btn-sm">Anggota Baru</button>
                                         </div>
+                                    </div>
 
-                                        <div class="mb-3">
+                                    <div class="mb-3">
+                                        <div class="col-sm-2">
                                             <label for="">No Transaksi</label>
                                             <input type="text" readonly name="no_transaksi" value="<?php echo $kode_transaksi ?>" class="form-control">
                                         </div>
-
-                                        <br><br>
-                                        <div class="table-transaction">
-                                            <div align="right" class="mb-3">
-                                                <button type="button" class="btn btn-primary btn-sm btn-add">Tambah</button>
-                                            </div>
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nama Buku</th>
-                                                        <th>Tanggal Pinjam</th>
-                                                        <th>Tanggal Kembali</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <select name="id_buku" id="" name="id_buku[]" class="form-control">
-                                                                <option value="">Pilih Buku</option>
-                                                                <option value=""></option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input type="date" name="tanggal_pinjam[]" class="form-contol">
-                                                        </td>
-                                                        <td>
-                                                            <input type="date" name="tanggal_pengembalian[]" class="form-contol">
-                                                        </td>
-                                                        <td>
-                                                            Hapus
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <input type="submit" class="btn btn-primary" name="simpan" value="Simpan">
-                                        <a href="peminjaman.php" class="btn btn-danger">Kembali</a>
+
+                                    <br><br>
+                                    <div class="table-transaction">
+                                        <div align="right" class="mb-3">
+                                            <button type="button" class="btn btn-primary btn-sm btn-add">Tambah</button>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama Buku</th>
+                                                    <th>Tanggal Pinjam</th>
+                                                    <th>Tanggal Kembali</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <select name="id_buku" id="" name="id_buku[]" class="form-control">
+                                                            <option value="">Pilih Buku</option>
+                                                            <?php while ($rowBuku = mysqli_fetch_assoc($queryBuku)) : ?>
+                                                                <option><?php echo $rowBuku['nama_buku'] ?></option>
+                                                            <?php endwhile ?>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="date" name="tanggal_pinjam[]" class="form-contol">
+                                                    </td>
+                                                    <td>
+                                                        <input type="date" name="tanggal_pengembalian[]" class="form-contol">
+                                                    </td>
+                                                    <td>
+                                                        Hapus
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                             </div>
-                            </form>
+                            <div class="mb-3">
+                                <input type="submit" class="btn btn-primary" name="simpan" value="Simpan">
+                                <a href="peminjaman.php" class="btn btn-danger">Kembali</a>
+                            </div>
                         </div>
-                    <?php } ?>
-
+                        </form>
                 </div>
+            <?php } ?>
+
             </div>
-            <!-- /.container-fluid -->
-
         </div>
-        <!-- End of Main Content -->
+        <!-- /.container-fluid -->
 
-        <!-- Footer -->
-        <?php include 'inc/footer.php'; ?>
-        <!-- End of Footer -->
+    </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <?php include 'inc/footer.php'; ?>
+    <!-- End of Footer -->
 
     </div>
     <!-- End of Content Wrapper -->
@@ -215,7 +235,26 @@ $kode_transaksi = $huruf . date("dmY") . sprintf("%03s", $urutan);
 
     <!-- Bootstrap core JavaScript-->
     <?php include 'inc/js.php'; ?>
-
+    <script>
+        $('.btn-add').click(function() {
+            let tbody = $('tbody');
+            let newTr = "<tr>";
+            newTr += "<td>";
+            newTr += "<select class='form-control' name='id_buku'>";
+            newTr += "<option>Pilih Buku</option>";
+            newTr += "<?php while ($rowBuku = mysqli_fetch_assoc($queryBuku)) : ?>"
+            newTr += "<option value=<?php echo $rowBuku['id'] ?>><?php echo $rowBuku['nama_buku'] ?></option>";
+            newTr += "<?php endwhile ?>"
+            newTr += "<option></option>"
+            newTr += "</select>";
+            newTr += "</td>";
+            newTr += "<td><input type='date'name='tanggal_pinjam[]' class='form-control'></td>";
+            newTr += "<td><input type='date'name='tanggal_pengembalian[]' class='form-control'></td>";
+            newTr += "<td>Hapus</td>";
+            newTr += "</tr>";
+            tbody.append(newTr);
+        });
+    </script>
 </body>
 
 </html>

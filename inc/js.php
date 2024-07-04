@@ -7,15 +7,10 @@
 <!-- Custom scripts for all pages-->
 <script src="assets/admin/js/sb-admin-2.min.js"></script>
 
-<script>
-    $('.btn-add').click(function() {
-        alert('duarrrrrrrr');
-    });
-</script>
+
 
 <script src="assets/datatables.min.js"></script>
 
 <script>
     let table = new DataTable('#datatables');
 </script>
-
