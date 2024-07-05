@@ -8,20 +8,20 @@ if (!isset($_SESSION['nama'])) {
 
 $query = mysqli_query($koneksi, "SELECT * FROM peminjam ORDER BY id DESC");
 
-function customStatus($aktif)
-{
-    switch ($aktif) {
-        case 1:
-            $pesan = "Aktif";
-            break;
+// function customStatus($aktif)
+// {
+//     switch ($aktif) {
+//         case 1:
+//             $pesan = "Aktif";
+//             break;
 
-        default:
-            $pesan = "Tidak Aktif";
-            break;
-    }
+//         default:
+//             $pesan = "Tidak Aktif";
+//             break;
+//     }
 
-    return $pesan;
-}
+//     return $pesan;
+// }
 
 ?>
 

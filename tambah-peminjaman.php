@@ -1,53 +1,59 @@
 <?php
 session_start();
 
-
-// kalo session tidak ada, tolong redirect ke login
+// Pastikan user sudah login sebelum mengakses halaman ini
 if (!isset($_SESSION['nama'])) {
-    header("location:index.php?error=access-failed");
+    header("location: index.php?error=access-failed");
+    exit;
 }
-include 'config/config.php';
-$queryUser = mysqli_query($koneksi, "SELECT * FROM peminjam ORDER BY id DESC");
 
-// Jika button disubmit, ambil nilai dari form, nama, email, password
+include 'config/config.php';
+
+// Jika tombol simpan ditekan
 if (isset($_POST['simpan'])) {
-    $id_buku = $_POST['id_buku'];
     $id_anggota = $_POST['id_anggota'];
     $no_transaksi = $_POST['no_transaksi'];
 
-    // masukkan ke dalam table peminjam dimana kolom nama di ambil nilainya dari input nama
-    $insertPeminjam = mysqli_query($koneksi, "INSERT INTO peminjam (id_anggota, no_transaksi) VALUE('$id_anggota', '$no_transaksi')");
-    $id_peminjam = mysqli_insert_id($koneksi);
+    if (!empty($id_anggota)) {
+        // Masukkan data ke tabel peminjam
+        $insertPeminjam = mysqli_query($koneksi, "INSERT INTO peminjam (id_anggota, no_transaksi) VALUES ('$id_anggota', '$no_transaksi')");
+        $id_peminjam = mysqli_insert_id($koneksi); // Dapatkan ID peminjam yang baru saja dimasukkan
 
-    foreach ($id_buku as $key => $buku) {
-        $books = $id_buku['$key'];
-        $tanggal_pinjam = $_POST['tanggal_pinjam']['$key'];
-        $tanggal_pengembalian = $_POST['tanggal_pengembalian']['$key'];
+        // Masukkan detail peminjaman
+        foreach ($_POST['id_buku'] as $key => $id_buku) {
+            $tgl_pinjam = $_POST['tgl_pinjam'][$key];
+            $tgl_pengembalian = $_POST['tgl_pengembalian'][$key];
 
-        $insertDetail = mysqli_query($koneksi, "INSERT INTO detail_peminjam (id_peminjam, id_buku, tanggal_pinjam, tanggal_pengembalian) VALUE ('$id_buku', '$id_peminjam', '$tanggal_pinjam', '$tanggal_pengembalian')");
+            $insertDetail = mysqli_query($koneksi, "INSERT INTO detail_peminjam (id_peminjam, id_buku, tgl_pinjam, tgl_pengembalian) 
+                                                    VALUES ('$id_peminjam', '$id_buku', '$tgl_pinjam', '$tgl_pengembalian')");
+        }
+
+        // Redirect dengan notifikasi tambah berhasil
+        header('location: peminjaman.php?tambah=berhasil');
+        exit;
     }
-    header('peminjam.php?tambah=berhasil');
 }
 
 // jika prameter delete ada, buat perintah/query delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
 
-    $delete = mysqli_query($koneksi, "DELETE FROM gelombang WHERE id='$id'");
-    header('location:gelombang.php?notif=delete=success');
+    $delete = mysqli_query($koneksi, "DELETE FROM peminjam WHERE id='$id'");
+    header('location:peminjaman.php?notif=delete=success');
 }
 
 // tampilkan semua data dari table user dimana id nya diambil dari params edit
 if (isset($_GET['edit'])) {
     $id = $_GET['edit'];
 
-    $queryEdit = mysqli_query($koneksi, "SELECT * FROM gelombang WHERE id='$id'");
+    $queryEdit = mysqli_query($koneksi, "SELECT * FROM peminjam WHERE id='$id'");
     $dataEdit = mysqli_fetch_assoc($queryEdit);
 }
 
 if (isset($_POST['edit'])) {
-    $nama_gelombang = $_POST['nama_gelombang'];
-    $aktif = $_POST['aktif'];
+    $id_buku = $_POST['id_buku'];
+    $id_anggota = $_POST['id_anggota'];
+    $no_transaksi = $_POST['no_transaksi'];
 
 
     $id = $_GET['edit'];
@@ -148,18 +154,21 @@ $queryBuku = mysqli_query($koneksi, "SELECT * FROM buku ORDER BY id DESC");
                                                 <?php endwhile ?>
                                             </select>
                                         </div>
-
-                                        <div class="col-sm-3">
-                                            <button type="button" class="btn btn-success btn-sm">Anggota Baru</button>
-                                        </div>
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="mb-3 row">
                                         <div class="col-sm-2">
                                             <label for="">No Transaksi</label>
                                             <input type="text" readonly name="no_transaksi" value="<?php echo $kode_transaksi ?>" class="form-control">
                                         </div>
                                     </div>
+
+                                    <br>
+
+                                    <div class="col-sm-3 row">
+                                            <button type="button" name="submit" class="btn btn-success btn-sm">Anggota Baru</button>
+
+                                        </div>
 
                                     <br><br>
                                     <div class="table-transaction">
@@ -176,25 +185,7 @@ $queryBuku = mysqli_query($koneksi, "SELECT * FROM buku ORDER BY id DESC");
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <select name="id_buku" id="" name="id_buku[]" class="form-control">
-                                                            <option value="">Pilih Buku</option>
-                                                            <?php while ($rowBuku = mysqli_fetch_assoc($queryBuku)) : ?>
-                                                                <option><?php echo $rowBuku['nama_buku'] ?></option>
-                                                            <?php endwhile ?>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="date" name="tanggal_pinjam[]" class="form-contol">
-                                                    </td>
-                                                    <td>
-                                                        <input type="date" name="tanggal_pengembalian[]" class="form-contol">
-                                                    </td>
-                                                    <td>
-                                                        Hapus
-                                                    </td>
-                                                </tr>
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -240,19 +231,30 @@ $queryBuku = mysqli_query($koneksi, "SELECT * FROM buku ORDER BY id DESC");
             let tbody = $('tbody');
             let newTr = "<tr>";
             newTr += "<td>";
-            newTr += "<select class='form-control' name='id_buku'>";
+            newTr += "<select class='form-control' name='id_buku[]'>";
             newTr += "<option>Pilih Buku</option>";
-            newTr += "<?php while ($rowBuku = mysqli_fetch_assoc($queryBuku)) : ?>"
-            newTr += "<option value=<?php echo $rowBuku['id'] ?>><?php echo $rowBuku['nama_buku'] ?></option>";
-            newTr += "<?php endwhile ?>"
-            newTr += "<option></option>"
+            <?php mysqli_data_seek($queryBuku, 0); ?>
+            <?php while ($rowBuku = mysqli_fetch_assoc($queryBuku)) : ?>
+                newTr += "<option value='<?php echo $rowBuku['id'] ?>'><?php echo $rowBuku['nama_buku'] ?></option>";
+            <?php endwhile ?>
             newTr += "</select>";
             newTr += "</td>";
-            newTr += "<td><input type='date'name='tanggal_pinjam[]' class='form-control'></td>";
-            newTr += "<td><input type='date'name='tanggal_pengembalian[]' class='form-control'></td>";
-            newTr += "<td>Hapus</td>";
+            newTr += "<td><input type='date' name='tgl_pinjam[]' class='form-control'></td>";
+            newTr += "<td><input type='date' name='tgl_pengembalian[]' class='form-control'></td>";
+            newTr += "<td><button type='button' class='btn btn-danger btn-remove'>Hapus</button></td>";
             newTr += "</tr>";
             tbody.append(newTr);
+        });
+
+        // Script untuk menghapus baris
+        $(document).on('click', '.btn-remove', function() {
+            $(this).closest('tr').remove();
+        });
+    </script>
+    <script>
+        var tambahButton = document.getElementsByName('submit')[0];
+        tambahButton.addEventListener('click', function() {
+            window.location.href = 'anggota.php';
         });
     </script>
 </body>
